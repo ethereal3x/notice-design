@@ -1,0 +1,91 @@
+{"level":"info","time":"2025-10-31T15:16:30.805+0800","caller":"notice/main.go:22","msg":"Starting notification service..."}
+{"level":"info","time":"2025-10-31T15:16:30.808+0800","caller":"notice/main.go:30","msg":"Database initialized successfully"}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notice/main.go:34","msg":"Repository initialized successfully"}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notification/manager.go:24","msg":"Initializing global notification manager"}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:58","msg":"EventDispatcher.RegisterHandler: register handler","event_type":"manuscript"}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:58","msg":"EventDispatcher.RegisterHandler: register handler","event_type":"award"}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notification/manager.go:33","msg":"Global notification manager initialized"}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notice/main.go:38","msg":"Notification manager initialized successfully"}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notice/main.go:41","msg":"Notification service started successfully"}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notice/main.go:79","msg":"Testing notification dispatch..."}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:44","msg":"EventDispatcher.Dispatch: event dispatched","event_type":"manuscript","account_id":123456}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:44","msg":"EventDispatcher.Dispatch: event dispatched","event_type":"award","account_id":123456}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:88","msg":"EventDispatcher.worker","id":1}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:88","msg":"EventDispatcher.worker","id":4}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:88","msg":"EventDispatcher.worker","id":2}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:88","msg":"EventDispatcher.worker","id":3}
+{"level":"info","time":"2025-10-31T15:16:30.809+0800","caller":"notice/main.go:103","msg":"Test notifications dispatched"}
+{"level":"debug","time":"2025-10-31T15:16:30.809+0800","caller":"notification/dispatcher.go:88","msg":"EventDispatcher.worker","id":0}
+{"level":"debug","time":"2025-10-31T15:16:30.814+0800","caller":"notification/dispatcher.go:129","msg":"EventDispatcher.handleEvent: handle event","event_type":"manuscript","account_id":123456,"duration":0.005727375}
+{"level":"debug","time":"2025-10-31T15:16:30.814+0800","caller":"notification/dispatcher.go:129","msg":"EventDispatcher.handleEvent: handle event","event_type":"award","account_id":123456,"duration":0.005754625}
+{"level":"info","time":"2025-10-31T15:21:00.899+0800","caller":"notice/main.go:112","msg":"Received shutdown signal: interrupt"}
+{"level":"info","time":"2025-10-31T15:21:00.899+0800","caller":"notice/main.go:115","msg":"Shutting down notification service..."}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:79","msg":"EventDispatcher.Stop: waiting for all workers to stop"}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:95","msg":"EventDispatcher.worker","id":2}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:95","msg":"EventDispatcher.worker","id":1}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:95","msg":"EventDispatcher.worker","id":0}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:95","msg":"EventDispatcher.worker","id":4}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:95","msg":"EventDispatcher.worker","id":3}
+{"level":"debug","time":"2025-10-31T15:21:00.899+0800","caller":"notification/dispatcher.go:83","msg":"EventDispatcher.Stop: all workers stopped"}
+{"level":"info","time":"2025-10-31T15:21:02.900+0800","caller":"notice/main.go:123","msg":"Notification service stopped"}
+2025-10-31T15:21:03.670+0800	info	notice/main.go:22	Starting notification service...
+2025-10-31T15:21:03.673+0800	info	notice/main.go:30	Database initialized successfully
+2025-10-31T15:21:03.674+0800	info	notice/main.go:34	Repository initialized successfully
+2025-10-31T15:21:03.674+0800	info	notification/manager.go:24	Initializing global notification manager
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:58	EventDispatcher.RegisterHandler: register handler	{"event_type": "manuscript"}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:58	EventDispatcher.RegisterHandler: register handler	{"event_type": "award"}
+2025-10-31T15:21:03.674+0800	info	notification/manager.go:33	Global notification manager initialized
+2025-10-31T15:21:03.674+0800	info	notice/main.go:38	Notification manager initialized successfully
+2025-10-31T15:21:03.674+0800	info	notice/main.go:41	Notification service started successfully
+2025-10-31T15:21:03.674+0800	info	notice/main.go:79	Testing notification dispatch...
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 1}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 0}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 4}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 3}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 2}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:44	EventDispatcher.Dispatch: event dispatched	{"event_type": "manuscript", "account_id": 123456}
+2025-10-31T15:21:03.674+0800	debug	notification/dispatcher.go:44	EventDispatcher.Dispatch: event dispatched	{"event_type": "award", "account_id": 123456}
+2025-10-31T15:21:03.674+0800	info	notice/main.go:103	Test notifications dispatched
+2025-10-31T15:21:03.676+0800	debug	notification/dispatcher.go:129	EventDispatcher.handleEvent: handle event	{"event_type": "award", "account_id": 123456, "duration": 0.002002375}
+2025-10-31T15:21:03.676+0800	debug	notification/dispatcher.go:129	EventDispatcher.handleEvent: handle event	{"event_type": "manuscript", "account_id": 123456, "duration": 0.002185042}
+2025-10-31T15:52:22.091+0800	info	notice/main.go:23	Starting notification service...
+2025-10-31T15:52:22.095+0800	info	notice/main.go:31	Database initialized successfully
+2025-10-31T15:52:22.095+0800	info	notice/main.go:35	Repository initialized successfully
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:58	EventDispatcher.RegisterHandler: register handler	{"event_type": "manuscript"}
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:58	EventDispatcher.RegisterHandler: register handler	{"event_type": "award"}
+2025-10-31T15:52:22.095+0800	info	notice/main.go:42	Event dispatcher initialized successfully
+2025-10-31T15:52:22.095+0800	info	notification/manager.go:23	Initializing global notification manager
+2025-10-31T15:52:22.095+0800	info	notification/manager.go:28	Global notification manager initialized
+2025-10-31T15:52:22.095+0800	info	notice/main.go:46	Notification manager initialized successfully
+2025-10-31T15:52:22.095+0800	info	notice/main.go:49	Notification service started successfully
+2025-10-31T15:52:22.095+0800	info	notice/main.go:87	Testing notification dispatch...
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:44	EventDispatcher.Dispatch: event dispatched	{"event_type": "manuscript", "account_id": 123456}
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:44	EventDispatcher.Dispatch: event dispatched	{"event_type": "award", "account_id": 123456}
+2025-10-31T15:52:22.095+0800	info	notice/main.go:111	Test notifications dispatched
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 2}
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 0}
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 4}
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 3}
+2025-10-31T15:52:22.095+0800	debug	notification/dispatcher.go:88	EventDispatcher.worker	{"id": 1}
+2025-10-31T15:52:22.097+0800	debug	notification/dispatcher.go:129	EventDispatcher.handleEvent: handle event	{"event_type": "manuscript", "account_id": 123456, "duration": 0.002323292}
+2025-10-31T15:52:22.097+0800	debug	notification/dispatcher.go:129	EventDispatcher.handleEvent: handle event	{"event_type": "award", "account_id": 123456, "duration": 0.002319417}
+2025-10-31T15:53:23.261+0800	info	notice/main.go:120	Received shutdown signal: interrupt
+2025-10-31T15:53:23.261+0800	info	notice/main.go:123	Shutting down notification service...
+2025-10-31T15:53:23.261+0800	debug	notification/dispatcher.go:79	EventDispatcher.Stop: waiting for all workers to stop
+2025-10-31T15:53:23.261+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 4}
+2025-10-31T15:53:23.261+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 1}
+2025-10-31T15:53:23.261+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 0}
+2025-10-31T15:53:23.261+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 3}
+2025-10-31T15:53:23.261+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 2}
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:83	EventDispatcher.Stop: all workers stopped
+2025-10-31T15:53:23.262+0800	info	notice/main.go:112	Received shutdown signal: interrupt
+2025-10-31T15:53:23.262+0800	info	notice/main.go:115	Shutting down notification service...
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:79	EventDispatcher.Stop: waiting for all workers to stop
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 4}
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 3}
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 1}
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 0}
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:95	EventDispatcher.worker	{"id": 2}
+2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:83	EventDispatcher.Stop: all workers stopped
+2025-10-31T15:53:25.263+0800	info	notice/main.go:131	Notification service stopped
+2025-10-31T15:53:25.263+0800	info	notice/main.go:123	Notification service stopped
