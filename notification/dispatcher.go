@@ -109,14 +109,11 @@ func (d *EventDispatcher) worker(id int) {
 			logger.ContextDebug(d.ctx, "EventDispatcher.worker stopped", zap.Int("id", id))
 			return
 		default:
-			// 使用MessageQueue接口的Pop方法
 			event, err := d.queue.Pop(d.ctx)
 			if err != nil {
-				// context取消或队列关闭
 				if d.ctx.Err() != nil {
 					return
 				}
-				// 其他错误，短暂休眠后重试
 				time.Sleep(100 * time.Millisecond)
 				continue
 			}
@@ -144,19 +141,41 @@ func (d *EventDispatcher) handleEvent(event Event) {
 		return
 	}
 
-	start := time.Now()
-	err := handler.Handle(event)
-	duration := time.Since(start)
-	if err != nil {
-		logger.ContextError(d.ctx, "EventDispatcher.handleEvent: handle event error",
-			zap.String("event_type", string(event.GetType())),
-			zap.Int64("account_id", event.GetAccountID()),
-			zap.Error(err))
-	} else {
-		logger.ContextDebug(d.ctx, "EventDispatcher.handleEvent: handle event",
-			zap.String("event_type", string(event.GetType())),
-			zap.Int64("account_id", event.GetAccountID()),
-			zap.Duration("duration", duration))
+	maxRetries := 3
+	var lastErr error
+	// 重试
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		start := time.Now()
+		err := handler.Handle(event)
+		duration := time.Since(start)
+		if err == nil {
+			logger.ContextDebug(d.ctx, "EventDispatcher.handleEvent: handle event success",
+				zap.String("event_type", string(event.GetType())),
+				zap.Int64("account_id", event.GetAccountID()),
+				zap.Int("attempt", attempt),
+				zap.Duration("duration", duration))
+			return
+		}
+		lastErr = err
+		if attempt < maxRetries {
+			backoff := time.Duration(attempt) * time.Second
+			logger.ContextWarn(d.ctx, "EventDispatcher.handleEvent: handle event failed, will retry",
+				zap.String("event_type", string(event.GetType())),
+				zap.Int64("account_id", event.GetAccountID()),
+				zap.Int("attempt", attempt),
+				zap.Int("max_retries", maxRetries),
+				zap.Duration("backoff", backoff),
+				zap.Error(err))
+			time.Sleep(backoff)
+		} else {
+			logger.ContextError(d.ctx, "EventDispatcher.handleEvent: handle event failed after all retries - MESSAGE LOST",
+				zap.String("event_type", string(event.GetType())),
+				zap.Int64("account_id", event.GetAccountID()),
+				zap.Int("total_attempts", maxRetries),
+				zap.Duration("total_duration", duration),
+				zap.Error(lastErr),
+				zap.Stack("stack_trace"))
+		}
 	}
 }
 

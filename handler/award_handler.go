@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ethereal3x/apc/logger"
 	"github.com/ethereal3x/notice/constants"
 	"github.com/ethereal3x/notice/notification"
 	"github.com/ethereal3x/notice/repo"
+	"go.uber.org/zap"
 )
 
 type AwardHandler struct {
@@ -37,7 +39,17 @@ func (a *AwardHandler) Handle(event notification.Event) error {
 		"award_amount":  awardEvent.AwardAmount,
 		"activity_name": awardEvent.ActivityName,
 	}
-	extDataJSON, _ := json.Marshal(ext)
+	extDataJSON, err := json.Marshal(ext)
+	if err != nil {
+		logger.ContextError(ctx, "AwardHandler: failed to marshal ext data",
+			zap.String("manuscript_id", awardEvent.ManuscriptId),
+			zap.Int64("account_id", awardEvent.GetAccountID()),
+			zap.String("award_type", awardEvent.AwardType),
+			zap.Int("award_amount", awardEvent.AwardAmount),
+			zap.Error(err))
+		return fmt.Errorf("marshal ext data failed: %w", err)
+	}
+
 	n := &repo.Notification{
 		AccountID: event.GetAccountID(),
 		Type:      constants.NOTIFICATION_TYPE_REWARD_DISTRIBUTE,
@@ -48,7 +60,40 @@ func (a *AwardHandler) Handle(event notification.Event) error {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	return a.repo.InsertNotice(ctx, n)
+
+	// 记录即将插入的通知信息
+	logger.ContextDebug(ctx, "AwardHandler: inserting notification",
+		zap.String("manuscript_id", awardEvent.ManuscriptId),
+		zap.Int64("account_id", n.AccountID),
+		zap.Int8("type", n.Type),
+		zap.String("title", n.Title),
+		zap.String("content", n.Content))
+
+	// 执行数据库插入
+	err = a.repo.InsertNotice(ctx, n)
+	if err != nil {
+		logger.ContextError(ctx, "AwardHandler: DATABASE INSERT FAILED - MESSAGE WILL BE LOST",
+			zap.String("event_type", "award"),
+			zap.String("manuscript_id", awardEvent.ManuscriptId),
+			zap.Int64("account_id", n.AccountID),
+			zap.String("award_type", awardEvent.AwardType),
+			zap.Int("award_amount", awardEvent.AwardAmount),
+			zap.String("activity_name", awardEvent.ActivityName),
+			zap.String("title", n.Title),
+			zap.String("content", n.Content),
+			zap.String("ext_data", n.ExtData),
+			zap.Error(err),
+			zap.String("error_type", fmt.Sprintf("%T", err)),
+			zap.Stack("stack_trace"))
+		return fmt.Errorf("insert notification failed: %w", err)
+	}
+
+	logger.ContextDebug(ctx, "AwardHandler: notification inserted successfully",
+		zap.String("manuscript_id", awardEvent.ManuscriptId),
+		zap.Int64("account_id", n.AccountID),
+		zap.Uint64("notification_id", n.ID))
+
+	return nil
 }
 
 func (a *AwardHandler) buildTitle(event *notification.AwardEvent) string {
