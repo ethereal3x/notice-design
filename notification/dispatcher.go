@@ -11,41 +11,57 @@ import (
 
 // EventDispatcher 事件分发器
 type EventDispatcher struct {
-	eventChan chan Event
-	handlers  map[EventType]EventHandler
-	mu        sync.RWMutex
-	ctx       context.Context
-	cancel    context.CancelFunc
-	wg        sync.WaitGroup
-	closed    bool
+	queue    MessageQueue
+	handlers map[EventType]EventHandler
+	mu       sync.RWMutex
+	ctx      context.Context
+	cancel   context.CancelFunc
+	wg       sync.WaitGroup
+	closed   bool
 }
 
-// NewEventDispatcher 初始化事件分发器
+// NewEventDispatcher 初始化事件分发器（使用默认channel队列）
 func NewEventDispatcher(ctx context.Context, bufferSize int) *EventDispatcher {
+	return NewEventDispatcherWithQueue(ctx, NewChannelQueue(bufferSize))
+}
+
+// NewEventDispatcherWithQueue 使用指定队列初始化事件分发器
+func NewEventDispatcherWithQueue(ctx context.Context, queue MessageQueue) *EventDispatcher {
 	ctx, cancel := context.WithCancel(ctx)
 	return &EventDispatcher{
-		eventChan: make(chan Event, bufferSize),
-		handlers:  make(map[EventType]EventHandler),
-		ctx:       ctx,
-		cancel:    cancel,
-		closed:    false,
+		queue:    queue,
+		handlers: make(map[EventType]EventHandler),
+		ctx:      ctx,
+		cancel:   cancel,
+		closed:   false,
 	}
+}
+
+// NewEventDispatcherWithConfig 使用配置初始化事件分发器
+func NewEventDispatcherWithConfig(ctx context.Context, config *QueueConfig) (*EventDispatcher, error) {
+	queue, err := NewMessageQueue(config)
+	if err != nil {
+		return nil, err
+	}
+	return NewEventDispatcherWithQueue(ctx, queue), nil
 }
 
 func (d *EventDispatcher) Dispatch(event Event) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	if d.closed {
-		d.mu.RUnlock()
 		return
 	}
-	select {
-	case d.eventChan <- event:
-		logger.ContextDebug(d.ctx, "EventDispatcher.Dispatch: event dispatched",
+
+	// 使用MessageQueue接口的Push方法
+	err := d.queue.Push(d.ctx, event, 5*time.Second)
+	if err != nil {
+		logger.ContextError(d.ctx, "EventDispatcher.Dispatch: failed to push event",
 			zap.String("event_type", string(event.GetType())),
-			zap.Int64("account_id", event.GetAccountID()))
-	case <-time.After(5 * time.Second):
-		logger.ContextError(d.ctx, "EventDispatcher.Dispatch: event channel is full, drop event",
+			zap.Int64("account_id", event.GetAccountID()),
+			zap.Error(err))
+	} else {
+		logger.ContextDebug(d.ctx, "EventDispatcher.Dispatch: event dispatched",
 			zap.String("event_type", string(event.GetType())),
 			zap.Int64("account_id", event.GetAccountID()))
 	}
@@ -79,21 +95,32 @@ func (d *EventDispatcher) Stop() {
 	logger.ContextDebug(d.ctx, "EventDispatcher.Stop: waiting for all workers to stop")
 	d.cancel()
 	d.wg.Wait()
-	close(d.eventChan)
+	d.queue.Close()
 	logger.ContextDebug(d.ctx, "EventDispatcher.Stop: all workers stopped")
 }
 
 func (d *EventDispatcher) worker(id int) {
 	defer d.wg.Done()
-	logger.ContextDebug(d.ctx, "EventDispatcher.worker", zap.Int("id", id))
+	logger.ContextDebug(d.ctx, "EventDispatcher.worker started", zap.Int("id", id))
 
 	for {
 		select {
-		case event := <-d.eventChan:
-			d.handleEvent(event)
 		case <-d.ctx.Done():
-			logger.ContextDebug(d.ctx, "EventDispatcher.worker", zap.Int("id", id))
+			logger.ContextDebug(d.ctx, "EventDispatcher.worker stopped", zap.Int("id", id))
 			return
+		default:
+			// 使用MessageQueue接口的Pop方法
+			event, err := d.queue.Pop(d.ctx)
+			if err != nil {
+				// context取消或队列关闭
+				if d.ctx.Err() != nil {
+					return
+				}
+				// 其他错误，短暂休眠后重试
+				time.Sleep(100 * time.Millisecond)
+				continue
+			}
+			d.handleEvent(event)
 		}
 	}
 }
@@ -134,9 +161,9 @@ func (d *EventDispatcher) handleEvent(event Event) {
 }
 
 func (d *EventDispatcher) GetEventChannelLen() int {
-	return len(d.eventChan)
+	return d.queue.Len()
 }
 
 func (d *EventDispatcher) GetEventChanCap() int {
-	return cap(d.eventChan)
+	return d.queue.Cap()
 }

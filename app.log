@@ -89,3 +89,31 @@
 2025-10-31T15:53:23.262+0800	debug	notification/dispatcher.go:83	EventDispatcher.Stop: all workers stopped
 2025-10-31T15:53:25.263+0800	info	notice/main.go:131	Notification service stopped
 2025-10-31T15:53:25.263+0800	info	notice/main.go:123	Notification service stopped
+2025-11-03T10:59:59.539+0800	info	notice/main.go:23	Starting notification service...
+2025-11-03T10:59:59.541+0800	error	notice/main.go:28	Failed to initialize database: failed to connect to database: failed to connect database: dial tcp [::1]:3306: connect: connection refused
+2025-11-03T11:00:25.398+0800	info	notice/main.go:23	Starting notification service...
+2025-11-03T11:00:25.412+0800	info	notice/main.go:31	Database initialized successfully
+2025-11-03T11:00:25.412+0800	info	notice/main.go:35	Repository initialized successfully
+2025-11-03T11:00:25.412+0800	debug	notification/dispatcher.go:74	EventDispatcher.RegisterHandler: register handler	{"event_type": "manuscript"}
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:74	EventDispatcher.RegisterHandler: register handler	{"event_type": "award"}
+2025-11-03T11:00:25.413+0800	info	notice/main.go:42	Event dispatcher initialized successfully
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:104	EventDispatcher.worker started	{"id": 3}
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:104	EventDispatcher.worker started	{"id": 4}
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:104	EventDispatcher.worker started	{"id": 1}
+2025-11-03T11:00:25.413+0800	info	notification/manager.go:23	Initializing global notification manager
+2025-11-03T11:00:25.413+0800	info	notification/manager.go:28	Global notification manager initialized
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:104	EventDispatcher.worker started	{"id": 2}
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:104	EventDispatcher.worker started	{"id": 0}
+2025-11-03T11:00:25.413+0800	info	notice/main.go:46	Notification manager initialized successfully
+2025-11-03T11:00:25.413+0800	info	notice/main.go:49	Notification service started successfully
+2025-11-03T11:00:25.413+0800	info	notice/main.go:87	Testing notification dispatch...
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:64	EventDispatcher.Dispatch: event dispatched	{"event_type": "manuscript", "account_id": 123456}
+2025-11-03T11:00:25.413+0800	debug	notification/dispatcher.go:64	EventDispatcher.Dispatch: event dispatched	{"event_type": "award", "account_id": 123456}
+2025-11-03T11:00:25.413+0800	info	notice/main.go:111	Test notifications dispatched
+2025-11-03T11:00:25.420+0800	debug	notification/dispatcher.go:156	EventDispatcher.handleEvent: handle event	{"event_type": "manuscript", "account_id": 123456, "duration": 0.007273792}
+2025-11-03T11:00:25.421+0800	debug	notification/dispatcher.go:156	EventDispatcher.handleEvent: handle event	{"event_type": "award", "account_id": 123456, "duration": 0.00771125}
+2025-11-03T11:14:33.422+0800	info	notice/main.go:120	Received shutdown signal: interrupt
+2025-11-03T11:14:33.423+0800	info	notice/main.go:123	Shutting down notification service...
+2025-11-03T11:14:33.423+0800	debug	notification/dispatcher.go:95	EventDispatcher.Stop: waiting for all workers to stop
+2025-11-03T11:14:33.423+0800	debug	notification/dispatcher.go:99	EventDispatcher.Stop: all workers stopped
+2025-11-03T11:14:35.424+0800	info	notice/main.go:131	Notification service stopped
